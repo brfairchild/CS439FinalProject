@@ -44,7 +44,7 @@ namespace CS439FinalProject
         protected override void Initialize()
         {
             player = new Player(new Vector2(graphics.PreferredBackBufferWidth / 2f,
-                                            graphics.PreferredBackBufferHeight / 2f),
+                                            graphics.PreferredBackBufferHeight - 50f),
                                 GraphicsDevice);
 
             base.Initialize();

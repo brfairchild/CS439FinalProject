@@ -32,3 +32,4 @@ C:\Users\Asusb\Documents\GIT\CS439FinalBraydenFairchild\CS439FinalProject\CS439F
 C:\Users\Asusb\Documents\GIT\CS439FinalBraydenFairchild\CS439FinalProject\CS439FinalProject\obj\Debug\net9.0\CS439FinalProject.genruntimeconfig.cache
 C:\Users\Asusb\Documents\GIT\CS439FinalBraydenFairchild\CS439FinalProject\CS439FinalProject\obj\Debug\net9.0\ref\CS439FinalProject.dll
 C:\Users\Asusb\Documents\GIT\CS439FinalBraydenFairchild\CS439FinalProject\CS439FinalProject\bin\Debug\net9.0\Content\Arial.xnb
+C:\Users\Asusb\Documents\GIT\CS439FinalBraydenFairchild\CS439FinalProject\CS439FinalProject\obj\Debug\net9.0\CS439FinalProject.sourcelink.json
