@@ -1,6 +1,6 @@
 # CS439 Final Project
 
-## Programs used
+## Programs Used
 - readme.so
 - bfxr.net
 - Photopea
