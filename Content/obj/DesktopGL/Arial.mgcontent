@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>C:/Users/Asusb/Documents/GIT/CS439FinalBraydenFairchild/CS439FinalProject/CS439FinalProject/Content/Arial.spritefont</SourceFile>
+  <SourceTime>2025-11-11T21:35:45.5833797-05:00</SourceTime>
+  <DestFile>C:/Users/Asusb/Documents/GIT/CS439FinalBraydenFairchild/CS439FinalProject/CS439FinalProject/Content/bin/DesktopGL/Arial.xnb</DestFile>
+  <DestTime>2025-11-11T21:36:04.1547169-05:00</DestTime>
+  <Importer>FontDescriptionImporter</Importer>
+  <ImporterTime>2025-10-20T10:25:32-04:00</ImporterTime>
+  <Processor>FontDescriptionProcessor</Processor>
+  <ProcessorTime>2025-10-20T10:25:32-04:00</ProcessorTime>
+  <Parameters>
+    <Key>PremultiplyAlpha</Key>
+    <Value>True</Value>
+  </Parameters>
+  <Parameters>
+    <Key>TextureFormat</Key>
+    <Value>Compressed</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>
