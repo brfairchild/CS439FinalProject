@@ -1,38 +1,56 @@
 import pygame
 import sys
-from player import player  # Make sure player.py is in the same folder or in PYTHONPATH
+from player import player
+from camera import camera
 
 # Initialize Pygame
 pygame.init()
 
-# Window settings
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 960
-window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+# Screen settings
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 960
+window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("CS439_FinalProject_BraydenFairchild")
+
+# World settings (larger than screen)
+WORLD_WIDTH = 3000
+WORLD_HEIGHT = 2000
 
 # Clock for delta time
 clock = pygame.time.Clock()
 
 # Create player
-player = player(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 50)
+player = player(WORLD_WIDTH // 2, WORLD_HEIGHT // 2)
+
+# Create camera
+camera = camera(SCREEN_WIDTH, SCREEN_HEIGHT, WORLD_WIDTH, WORLD_HEIGHT)
 
 # Main loop
 running = True
 while running:
-    dt = clock.tick(60) / 1000  
+    dt = clock.tick(60) / 1000  # delta time in seconds
+
+    # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
+    # Keyboard input
     keys = pygame.key.get_pressed()
+    player.handle_input(keys, dt, WORLD_WIDTH, WORLD_HEIGHT)
 
-    player.handle_input(keys, dt)
+    # Update camera to follow player
+    camera.update(player)
 
-    window.fill((30, 30, 30))
-    player.draw(window)
+    # Draw
+    window.fill((30, 30, 30))  # background color
+    player.draw(window, camera)
+
+    # Example: draw world bounds (optional)
+    pygame.draw.rect(window, (100, 100, 100), camera.apply(pygame.Rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT)), 5)
+
     pygame.display.flip()
 
-
+# Quit Pygame
 pygame.quit()
 sys.exit()
