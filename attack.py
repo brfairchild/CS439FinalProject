@@ -10,14 +10,15 @@ class attack:
         self.player_ref = player_ref
         self.target_world_pos = target_world_pos
         
-        # Load and play the sound
         sound_path = os.path.join("assets", "player", "attack", "wosh.mp3")
         try:
             self.sound = pygame.mixer.Sound(sound_path)
-            self.sound.play()
+            self.sound.set_volume(0.3) 
         except pygame.error as e:
-            print(f"Could not load or play sound: {e}")
+            print(f"Could not load sound: {e}")
             self.sound = None
+            
+        self.sound_played = False 
 
 
         self.frames = []
@@ -44,7 +45,8 @@ class attack:
         else:
             direction_vec = target_vec.normalize()
             
-        # First Angle calculation (in degrees)
+        self.direction = direction_vec 
+
         self.angle = math.degrees(math.atan2(-target_vec.y, target_vec.x))
         self.rect = self.frames[0].get_rect()
         self.rect.centerx = player_center.x + direction_vec.x * self.offset_distance
@@ -52,18 +54,23 @@ class attack:
 
         self.hitbox = self.rect.copy()
 
+    def play_sound_once(self):
+        if self.sound and not self.sound_played:
+            self.sound.play()
+            self.sound_played = True
+
     def update(self, dt):
         player_center = pygame.Vector2(self.player_ref.rect.center)
-        # Vector from player's current position to the mouse
         target_vec = self.target_world_pos - player_center
         
         if target_vec.length() != 0:
             direction_vec = target_vec.normalize()
 
-            # Update the attack's center position
             self.rect.centerx = player_center.x + direction_vec.x * self.offset_distance
             self.rect.centery = player_center.y + direction_vec.y * self.offset_distance
             self.angle = math.degrees(math.atan2(-target_vec.y, target_vec.x))
+        
+        self.hitbox.center = self.rect.center
         
         self.frame_timer += dt
         if self.frame_timer >= self.frame_speed:
@@ -72,10 +79,9 @@ class attack:
             if self.current_frame >= len(self.frames):
                 self.finished = True 
 
-    def draw(self, surface, camera):
+    def draw(self, surface):
         original_image = self.frames[self.current_frame]
         rotated_image = pygame.transform.rotate(original_image, self.angle)
         
-        # Recalculate the position to center
         new_rect = rotated_image.get_rect(center=self.rect.center)
-        surface.blit(rotated_image, camera.apply(new_rect))
+        surface.blit(rotated_image, new_rect)

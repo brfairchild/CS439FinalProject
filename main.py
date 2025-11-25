@@ -1,19 +1,21 @@
 import pygame
 import sys
 import os 
+import pathlib
 from player import player
 from attack import attack
-from camera import camera
+from base_bullet import Bullet
+from spiral import SpiralPattern 
+from playerbullet import PlayerBullet
 
+# Initialize the mixer and Pygame
+pygame.mixer.pre_init(44100, -16, 2, 512) 
 pygame.init()
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 960
 window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("CS439_FinalProject_BraydenFairchild")
-
-WORLD_WIDTH = 3000
-WORLD_HEIGHT = 2000
 
 clock = pygame.time.Clock()
 
@@ -22,19 +24,19 @@ try:
     background_path = os.path.join("assets", "map.png")
     background_image = pygame.image.load(background_path).convert() 
 except pygame.error as e:
+    print(f"Error loading background image: {e}")
     background_image = None
 
 
-# Initializing player near the center of the world
-player = player(WORLD_WIDTH // 2, WORLD_HEIGHT // 2)
-# Set up the camera to view the world, clamped to 3000x2000 bounds
-camera = camera(SCREEN_WIDTH, SCREEN_HEIGHT, WORLD_WIDTH, WORLD_HEIGHT)
+player = player(SCREEN_WIDTH // 2, SCREEN_HEIGHT)
 
 attacks = []
+bullets = [] # Enemy 
+friendly_bullets = [] # Player
+active_patterns = [] 
 
 running = True
 while running:
-    # Frame-rate
     dt = clock.tick(60) / 1000
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -42,43 +44,110 @@ while running:
             
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1: 
-                # Only attack if the previous attack animation is finished
                 if not player.is_attacking:
                     
                     mouse_pos_screen = pygame.mouse.get_pos()
-                    # Convert screen position to world position so the attack knows where to aim
-                    target_pos_world = camera.screen_to_world(mouse_pos_screen) 
+                    target_pos_screen = pygame.Vector2(mouse_pos_screen) 
                     
-                    # Spawn the attack and lock the player's attack state
-                    attacks.append(attack(player, target_pos_world)) 
+                    new_attack = attack(player, target_pos_screen) 
+                    attacks.append(new_attack)
+                    
+                    new_attack.play_sound_once()
+                    
                     player.is_attacking = True
 
-    # Handle continuous key presses for movement
     keys = pygame.key.get_pressed()
-    player.handle_input(keys, dt, WORLD_WIDTH, WORLD_HEIGHT)
+    
+    # PATTERN LOGIC 
+    if keys[pygame.K_SPACE]:
+        if not any(isinstance(p, SpiralPattern) for p in active_patterns):
+            
+            OFFSET = 100
+            
+            top_left_x = OFFSET
+            top_left_y = OFFSET
+            
+            top_right_x = SCREEN_WIDTH - OFFSET
+            top_right_y = OFFSET
+            
+            active_patterns.append(SpiralPattern(top_left_x, top_left_y))
+            active_patterns.append(SpiralPattern(top_right_x, top_right_y))
+    
+    player.handle_input(keys, dt, SCREEN_WIDTH, SCREEN_HEIGHT)
 
+    # UPDATE ATTACKS
     for atk in attacks[:]:
         atk.update(dt) 
         if atk.finished:
             attacks.remove(atk)
             player.is_attacking = False 
 
-    # Update the camera position based on the player's movement
-    camera.update(player)
+    # Update Patterns and Spawn New Bullets
+    for pattern in active_patterns[:]:
+        new_bullets = pattern.update(dt)
+        bullets.extend(new_bullets) 
+        
+        if pattern.finished:
+            active_patterns.remove(pattern)
 
+    # Enemy Bullets
+    for bullet in bullets[:]:
+        bullet.update(dt, SCREEN_WIDTH, SCREEN_HEIGHT) 
+        
+        reflected_direction = None
+        
+        # Reflection collision
+        for atk in attacks:
+            result = bullet.check_collision(atk.hitbox)
+            if result is not None:
+                reflected_direction = atk.direction 
+                break # Stops checking other attacks once a hit is confirmed.
+        
+        # Reflection or Removal
+        if reflected_direction is not None:
+            
+            # Spawn reflected bullet
+            reflected_vector = reflected_direction.copy()
+            new_friendly_bullet = PlayerBullet(
+                bullet.rect.centerx, 
+                bullet.rect.centery, 
+                reflected_vector 
+            )
+            friendly_bullets.append(new_friendly_bullet)
+            
+            # Remove enemy bullet
+            bullets.remove(bullet)
+            
+        elif not bullet.alive:
+            # Remove the enemy bullet if it went off-screen
+            bullets.remove(bullet)
+
+    # Clearing player bullet
+    for f_bullet in friendly_bullets[:]:
+        f_bullet.update(dt, SCREEN_WIDTH, SCREEN_HEIGHT)
+        
+        if not f_bullet.alive:
+            friendly_bullets.remove(f_bullet)
+
+
+    # Drawing
     if background_image:
-        # Calculate the camera offset (negative of world position)
-        camera_offset_x = -camera.state.left
-        camera_offset_y = -camera.state.top
-        draw_position = (int(camera_offset_x), int(camera_offset_y))
-        window.blit(background_image, draw_position) 
+        window.blit(background_image, (0, 0)) 
     else:
         window.fill((30, 30, 30))
 
-    # Draw 
-    player.draw(window, camera)
+    player.draw(window)
+    
     for atk in attacks:
-        atk.draw(window, camera)
+        atk.draw(window)
+
+    # Draw Enemy Bullets
+    for bullet in bullets:
+        bullet.draw(window)
+        
+    # Draw friendly Bullets
+    for f_bullet in friendly_bullets:
+        f_bullet.draw(window)
 
     # Update screen
     pygame.display.flip()

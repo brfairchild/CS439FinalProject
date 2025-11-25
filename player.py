@@ -11,6 +11,7 @@ class player:
             path = os.path.join("assets", "player", f"{i:02}.png")
             self.frames.append(pygame.image.load(path).convert_alpha())
         self.image = self.idle_frame
+        # self.rect is now in SCREEN coordinates
         self.rect = self.image.get_rect(center=(x, y))
         self.speed = speed
         self.current_frame = 0
@@ -19,6 +20,7 @@ class player:
         self.facing_right = False
         self.is_attacking = False 
 
+    # world_width/height now represents SCREEN_WIDTH/HEIGHT
     def handle_input(self, keys, dt, world_width, world_height):
         movement = pygame.Vector2(0, 0)
 
@@ -49,8 +51,9 @@ class player:
             movement = movement.normalize()
             self.rect.center += movement * self.speed * dt
 
+        # Clamping to the screen boundaries
         self.rect.left = max(self.rect.left, 0)
-        self.rect.right = min(self.rect.right, world_width)
+        self.rect.right = min(self.rect.right, world_width) 
         self.rect.top = max(self.rect.top, 0)
         self.rect.bottom = min(self.rect.bottom, world_height)
 
@@ -63,6 +66,7 @@ class player:
         else:
             self.image = self.idle_frame
 
-    def draw(self, surface, camera):
+    # MODIFIED: Removed 'camera' argument and applied screen position directly
+    def draw(self, surface):
         img = pygame.transform.flip(self.image, True, False) if self.facing_right else self.image
-        surface.blit(img, camera.apply(self.rect))
+        surface.blit(img, self.rect)
