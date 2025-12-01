@@ -13,7 +13,7 @@ pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
 
 SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 960
+SCREEN_HEIGHT = 640
 window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("CS439_FinalProject_BraydenFairchild")
 
@@ -24,7 +24,6 @@ try:
     background_path = os.path.join("assets", "map.png")
     background_image = pygame.image.load(background_path).convert() 
 except pygame.error as e:
-    print(f"Error loading background image: {e}")
     background_image = None
 
 
@@ -58,11 +57,11 @@ while running:
 
     keys = pygame.key.get_pressed()
     
-    # PATTERN LOGIC 
+    # Pattern spawning
     if keys[pygame.K_SPACE]:
         if not any(isinstance(p, SpiralPattern) for p in active_patterns):
             
-            OFFSET = 100
+            OFFSET = 50
             
             top_left_x = OFFSET
             top_left_y = OFFSET
@@ -75,7 +74,7 @@ while running:
     
     player.handle_input(keys, dt, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    # UPDATE ATTACKS
+    # Handle attack updating
     for atk in attacks[:]:
         atk.update(dt) 
         if atk.finished:
@@ -101,7 +100,7 @@ while running:
             result = bullet.check_collision(atk.hitbox)
             if result is not None:
                 reflected_direction = atk.direction 
-                break # Stops checking other attacks once a hit is confirmed.
+                break # Stops checking other attacks once it gets hit
         
         # Reflection or Removal
         if reflected_direction is not None:

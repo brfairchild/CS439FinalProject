@@ -50,6 +50,11 @@ class player:
         if movement.length() != 0:
             movement = movement.normalize()
             self.rect.center += movement * self.speed * dt
+        
+        if keys[pygame.K_LSHIFT]:
+            self.speed = 100
+        else:
+            self.speed = 350
 
         # Clamping to the screen boundaries
         self.rect.left = max(self.rect.left, 0)

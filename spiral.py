@@ -13,13 +13,13 @@ class SpiralPattern:
         self.total_bullets_fired = 0
         self.max_duration = 15
 
-        # Sound Cooldown Control: Play sound only once per second
+        # Sound Cooldown
         self.bullet_sound_cooldown = 0.05
         self.time_since_last_sound = 0.0
         
         self.finished = False
 
-        # Parameters for slower, reversing spin
+        # Reversing spin
         self.base_angle_rate = 23.0  
         self.oscillation_frequency = 0.5
         self.current_cumulative_angle = 0.0
