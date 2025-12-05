@@ -3,10 +3,11 @@ import pygame
 import math
 
 class SpiralPattern:
-    def __init__(self, **kwargs):
-        # Accept spawn_position, bullet_speed, max_duration, etc.
-        spawn_position = kwargs.get("spawn_position", (640, 80))
-        self.center = pygame.Vector2(*spawn_position)
+    def __init__(self, **kwargs):     
+        spawn_x = kwargs.get("start_x") or kwargs.get("x") or 640
+        spawn_y = kwargs.get("start_y") or kwargs.get("y") or 80
+        
+        self.center = pygame.Vector2(spawn_x, spawn_y) # Use the determined coordinates
 
         self.timer = 0.0
         self.spawn_rate = kwargs.get("spawn_rate", 0.05)
@@ -26,6 +27,7 @@ class SpiralPattern:
         self.current_cumulative_angle = 0.0
         self.bullet_speed = kwargs.get("bullet_speed", 250)
 
+
     def update(self, dt):
         self.timer += dt
         self.time_since_last_spawn += dt
@@ -36,7 +38,7 @@ class SpiralPattern:
             self.finished = True
             return new_bullets
             
-        # Dynamic angle adjustment
+        # Angle adjustment
         speed_multiplier = math.sin(self.timer * 2 * math.pi * self.oscillation_frequency)
         angle_change = self.base_angle_rate * speed_multiplier * dt * 60 
         self.current_cumulative_angle += angle_change
@@ -52,6 +54,7 @@ class SpiralPattern:
             direction1 = pygame.Vector2(math.cos(angle_rad_base), math.sin(angle_rad_base))
             direction2 = pygame.Vector2(math.cos(angle_rad_base + math.pi), math.sin(angle_rad_base + math.pi))
             
+            # Bullets originate at self.center
             new_bullet1 = Bullet(self.center.x, self.center.y, direction1, speed=self.bullet_speed)
             new_bullet2 = Bullet(self.center.x, self.center.y, direction2, speed=self.bullet_speed)
             

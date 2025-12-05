@@ -35,7 +35,6 @@ class Bullet:
         try:
             self.sound = pygame.mixer.Sound(sound_path)
         except pygame.error as e:
-            print(f"FATAL AUDIO ERROR: Could not load sound from {sound_path}. Pygame error: {e}")
             self.sound = None
 
         self.sound_played = False

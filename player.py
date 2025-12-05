@@ -100,7 +100,7 @@ class player:
         else:
             self.speed = 350
 
-        # Clamp to screen
+        # Keep in screen
         self.rect.left = max(self.rect.left, 0)
         self.rect.right = min(self.rect.right, world_width) 
         self.rect.top = max(self.rect.top, 0)
@@ -120,7 +120,7 @@ class player:
             self.image = self.idle_frame
 
     def draw(self, surface):
-        # Draw hearts top-left
+        # Draw hearts
         for i in range(3):
             heart_img = self.heart_full if i < self.lives else self.heart_empty
             surface.blit(heart_img, (10 + i * (heart_img.get_width() + 5), 10))
