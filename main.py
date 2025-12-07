@@ -1,7 +1,7 @@
 import pygame
 import sys
 import os
-from player import player
+from player import player as PlayerClass # just to make call for restart
 from attack import attack
 from base_bullet import Bullet
 from circleburst import CircleBurstPattern
@@ -53,8 +53,8 @@ boss = None
 def reset_game():
     global player, attacks, bullets, friendly_bullets, active_patterns, current_pattern_index, game_state, boss, boss_move_timer, score
     
-    player = player(SCREEN_WIDTH // 2, SCREEN_HEIGHT) 
-    boss = Boss(SCREEN_WIDTH, SCREEN_HEIGHT) 
+    player = PlayerClass(SCREEN_WIDTH // 2, SCREEN_HEIGHT)
+    boss = Boss(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     attacks = []
     bullets = []
