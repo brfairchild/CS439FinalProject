@@ -25,7 +25,7 @@ GAME_STATE_GAMEOVER = "game_over"
 game_state = GAME_STATE_PLAYING 
 
 # Boss time
-BOSS_MOVE_INTERVAL = 10.0
+BOSS_MOVE_INTERVAL = 5.0
 boss_move_timer = 0.0
 
 # Score
@@ -80,6 +80,27 @@ pattern_sequence = [
         "class": SpiralPattern,
         "params": {
             "bullet_speed": 350,
+            "duration": 2.0
+        }
+    },
+    {
+        "class": CircleBurstPattern,
+        "params": {
+            "bullet_speed": 200,
+            "duration": 2.0
+        }
+    },
+    {
+        "class": SpiralPattern,
+        "params": {
+            "bullet_speed": 200,
+            "duration": 2.0
+        }
+    },
+    {
+        "class": SpiralPattern,
+        "params": {
+            "bullet_speed": 400,
             "duration": 2.0
         }
     }

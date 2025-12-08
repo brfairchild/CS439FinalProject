@@ -1,20 +1,35 @@
 import pygame
+import os
 
 class Boss(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height):
         super().__init__()
         
-        # --- Constants ---
         self.SCREEN_WIDTH = screen_width
         self.SCREEN_HEIGHT = screen_height
         self.MOVEMENT_SPEED = 50
         self.TARGET_Y = 80
         
-        # Draw boss square for right now
-        self.width = 100
-        self.height = 100
-        self.image = pygame.Surface([self.width, self.height])
-        self.image.fill((0, 255, 0))
+
+        boss_png = os.path.join("assets", "boss.png")
+        
+        try:
+            # Load the image
+            original_image = pygame.image.load(boss_png).convert_alpha()
+            
+            # Define desired size for the boss (e.g., 100x100)
+            self.width = 100
+            self.height = 100
+            
+            # Scale the image
+            self.image = pygame.transform.scale(original_image, (self.width, self.height))
+            
+        except pygame.error as e:
+            self.width = 100
+            self.height = 100
+            self.image = pygame.Surface([self.width, self.height])
+            self.image.fill((255, 0, 0))
+        
         self.rect = self.image.get_rect()
         
         # Movement
@@ -54,7 +69,7 @@ class Boss(pygame.sprite.Sprite):
                 self.current_target = 1
                 
             # Stop movement after reaching the target
-            self.is_moving = False 
+            self.is_moving = False  
             
         else:
             # Move towards the target
